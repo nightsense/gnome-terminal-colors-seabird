@@ -79,19 +79,7 @@ interactive_select_profile() {
 
   set -- "${profile_names[@]}"
 
-  echo "Please select a Gnome Terminal profile:"
-  select profile_name
-  do
-    if [[ -z $profile_name ]]
-    then
-      die "ERROR: Invalid selection -- ABORTING!" 3
-    fi
-    profile_key=$(expr ${REPLY} - 1)
-    break
-  done
-  echo
-
-  profile=${profiles[$profile_key]}
+  profile=${profiles[0]}
 }
 
 

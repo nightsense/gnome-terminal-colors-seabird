@@ -119,16 +119,7 @@ interactive_confirm() {
   echo    "  Scheme:  $scheme"
   echo    "  Profile: $(get_profile_name $profile) ($profile)"
   echo
-  echo    "Are you sure you want to overwrite the selected profile?"
-  echo -n "(YES to continue) "
-
-  read confirmation
-  if [[ $(echo $confirmation | tr '[:lower:]' '[:upper:]') != YES ]]
-  then
-    die "ERROR: Confirmation failed -- ABORTING!"
-  fi
-
-  echo    "Confirmation received -- applying settings"
+  echo    "Applying settings"
 }
 
 while [ $# -gt 0 ]

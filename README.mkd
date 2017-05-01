@@ -1,4 +1,4 @@
-# seabird colorscheme for gnome terminal
+# seabird gnome-terminal theme
 
 Scripts for setting the [seabird theme](https://github.com/nightsense/seabird) in gnome-terminal.
 

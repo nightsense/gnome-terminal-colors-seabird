@@ -172,4 +172,3 @@ else
 fi
 
 set_profile_colors $profile $scheme
-check_dircolors || warning_message_dircolors

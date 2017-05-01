@@ -2,71 +2,101 @@
 
 dircolors_checked=false
 DIRCOLORS_DIR="$(echo ~/.dir_colors)"
-DIRCOLORS_SOLARIZED="$(pwd)"
-DIRCOLORS_REPO_ADRESS="https://github.com/seebi/dircolors-solarized"
-DIRCOLORS_DL_ADRESS="https://raw.github.com/seebi/dircolors-solarized/master/"
+DIRCOLORS_SEABIRD="$(pwd)"
+DIRCOLORS_REPO_ADRESS="https://github.com/nightsense/dircolors-seabird"
+DIRCOLORS_DL_ADRESS="https://raw.github.com/nightsense/dircolors-seabird/master/"
 
 dl_dircolors() {
   echo
-  eval "wget -O "$DIRCOLORS_SOLARIZED/dircolors" \
+  eval "wget -O "$DIRCOLORS_SEABIRD/dircolors" \
       "$DIRCOLORS_DL_ADRESS/dircolors.ansi-$scheme""
   valid=$?
-  if [ ! "$valid" == "0" -o ! -e "$DIRCOLORS_SOLARIZED/dircolors" ]
+  if [ ! "$valid" == "0" -o ! -e "$DIRCOLORS_SEABIRD/dircolors" ]
     then echo -e "Download failed, dircolors will not be copied but you "
-    echo -en "install it from the official repository : "
+    echo -en "can install it from the official repository : "
     echo "$DIRCOLORS_REPO_ADRESS"
     return 1
   fi
   return 0
 }
 
-copy_dicolors() {
-  if [ "$1" != 1 ]
-    then return
-  elif [ -f "$DIRCOLORS_DIR/dircolors" ]
-    eval dl_dircolors
-    dl_ok=$?
-    then if [ $dl_ok ]
-      then mv "$DIRCOLORS_DIR/dircolors" "$DIRCOLORS_DIR/dircolors.old"
-      echo -e "$DIRCOLORS_DIR/dircolors already exists, moving it as"
-      echo "dircolors.old"
+copy_dircolors() {
+  dircolors_dest_path="$DIRCOLORS_DIR/dircolors"
+  eval dl_dircolors
+  dl_ok=$?
+  if [ $dl_ok ]
+    # CentOS uses ~/.dir_colors as dir_colors file
+    then if [ -f "$DIRCOLORS_DIR" ]
+      then dircolors_dest_path="$DIRCOLORS_DIR"
+    else
+      mkdir -p "$DIRCOLORS_DIR"
+    fi
+
+    if [ -f "$dircolors_dest_path" ]
+      then mv "$dircolors_dest_path" "$dircolors_dest_path.old"
+      echo -n "$dircolors_dest_path already exists, renaming it to "
+      echo    "$dircolors_dest_path.old"
     fi
   fi
-  cp "$DIRCOLORS_SOLARIZED/dircolors" "$DIRCOLORS_DIR/dircolors"
+  cp "$DIRCOLORS_SEABIRD/dircolors" "$dircolors_dest_path"
+
   echo
-  echo "The new dircolors is copied as $DIRCOLORS_DIR/dircolors."
+  echo "The new dircolors have been installed as $dircolors_dest_path."
   echo
-  echo "Add \"eval \`dircolors /path/to/dircolorsdb\`\" in your in your shell "
-  echo "configuration file (.bashrc, .zshrc, etc...) to use the new dircolors."
+  echo -n "Add \"eval \`dircolors /path/to/dircolorsdb\`\" in your shell "
+  echo    "configuration file (.bashrc, .zshrc, etc...) to use new dircolors."
+  echo    "For Fish, add the following to config.fish instead:"
+  echo -e "\teval (dircolors /path/to/dircolorsdb | head -n 1 | sed 's/^LS_COLORS=/set -x LS_COLORS /;s/;$//')"
   echo
-  echo -en "Do not forget to remove the old dircolors in your shell "
-  echo -en "configuration file if it was named differently than "
-  echo -en "\"dircolors\".\n"
+  echo -en "Do not forget to remove old dircolors from your shell "
+  echo -en "configuration file if they were named differently than "
+  echo -en "the one newly installed.\n"
   echo
 }
 
+msg_create_dircolors() {
+  echo -en "A dircolors adapted to seabird can be automatically "
+  echo -en "downloaded.\n"
+  echo
+  echo -en "1) Download nightsense' dircolors-seabird: "
+  echo -en "https://github.com/nightsense/dircolors-seabird\n"
+  echo
+  echo -en "2) [DEFAULT] I don't need any dircolors.\n"
+}
+
+msg_already_existing_dircolors() {
+  echo -en "A dircolors already exists in $DIRCOLORS_DIR, but can be "
+  echo -en "incompatible with the seabird color scheme causing some colors "
+  echo -en "problems when doing a \"ls\".\n"
+  echo
+  echo -en "1) Replace the actual dircolors by nightsense' "
+  echo -en "dircolors-seabird: "
+  echo -en "https://github.com/nightsense/dircolors-seabird (the actual "
+  echo -en "dircolors will be keeped as backup).\n"
+  echo
+  echo -en "2) [DEFAULT] I am awared about this potentiall problem and will "
+  echo -en "check my dircolors (default path: ~/.dir_colors/dircolors) "
+  echo -en "in case of conflict.\n"
+}
+
 interactive_dircolors() {
+  already_existing_dircolors=$1
   noselect=true
   while $noselect
   do
     echo
-    echo -en "A dircolors already exists, but can be incompatible with the "
-    echo -en "solarized color scheme causing some colors problems when doing "
-    echo -en "a \"ls\".\n"
-    echo -e "\n"
-    echo -en "1) Replace the actual dircolors by the seebi' "
-    echo -en "dircolors-solarized :\n"
-    echo -en "   https://github.com/seebi/dircolors-solarized (the actual "
-    echo -en "dircolors will be \nkeeped as backup).\n"
+
+    if $already_existing_dircolors
+      then msg_already_existing_dircolors
+    else
+      msg_create_dircolors
+    fi
+
     echo
-    echo -en "2) [DEFAULT] I am awared about this potentiall problem and will"
-    echo -en "check my \n   dircolors (default path: ~/.dir_colors/dircolors) "
-    echo -en "in case of conflict.\n"
-    echo -e "\n"
     read -p "Enter your choice : [2] " selection
     selection=${selection:-2}
 
-    if [ "$selection" -gt 2 -o "$selection" -lt 1 ]
+    if [[ "$selection" -gt 2 || "$selection" -lt 1 ]]
       then echo "$selection is not a valid entry. Please Restart"
       echo
       noselect=true
@@ -74,7 +104,10 @@ interactive_dircolors() {
       noselect=false
     fi
   done
-  copy_dicolors $selection
+
+  if [ "$selection" == 1 ]
+    then copy_dircolors
+  fi
 }
 
 check_dircolors() {
@@ -82,9 +115,7 @@ check_dircolors() {
   if [ -d "$DIRCOLORS_DIR" ]
     then  [ "$(ls -A $DIRCOLORS_DIR)" ] && nonempty=true || nonempty=false
   fi
-  if [ $nonempty = true ]
-    then interactive_dircolors
-  fi
+  interactive_dircolors $nonempty
   return $(! $nonempty)
 }
 

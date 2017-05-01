@@ -1,6 +1,6 @@
-# seabird gnome-terminal theme
+# gnome-terminal-colours-seabird
 
-Scripts for setting the [seabird theme](https://github.com/nightsense/seabird) in gnome-terminal.
+Install kit for setting the [seabird theme](https://github.com/nightsense/seabird) in gnome-terminal.
 
 ## usage
 

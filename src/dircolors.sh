@@ -43,10 +43,10 @@ copy_dircolors() {
   echo
   echo "The new dircolors have been installed as $dircolors_dest_path."
   echo
-  echo -n "Add \"eval \`dircolors /path/to/dircolorsdb\`\" in your shell "
+  echo -n "Add \"eval \`dircolors $dircolors_dest_path\`\" in your shell "
   echo    "configuration file (.bashrc, .zshrc, etc...) to use new dircolors."
   echo    "For Fish, add the following to config.fish instead:"
-  echo -e "\teval (dircolors /path/to/dircolorsdb | head -n 1 | sed 's/^LS_COLORS=/set -x LS_COLORS /;s/;$//')"
+  echo -e "\teval (dircolors $dircolors_dest_path | head -n 1 | sed 's/^LS_COLORS=/set -x LS_COLORS /;s/;$//')"
   echo
   echo -en "Do not forget to remove old dircolors from your shell "
   echo -en "configuration file if they were named differently than "

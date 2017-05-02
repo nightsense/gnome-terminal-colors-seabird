@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-gnomeVersion="$(expr "$(gnome-terminal --version)" : '.* \(.*[.].*[.].*\)$')"
+gnomeVersion="$(expr "$(gnome-terminal --version)" | cut -d" " -f3)"
 dircolors_checked=false
 
 

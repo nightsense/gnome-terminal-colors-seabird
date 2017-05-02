@@ -6,7 +6,7 @@ schemes=($(cd $dir/colors && echo * && cd - > /dev/null))
 
 source $dir/src/tools.sh
 source $dir/src/profiles.sh
-source $dir/src/dircolors.sh
+#source $dir/src/dircolors.sh
 
 show_help() {
   echo
